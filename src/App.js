@@ -1,23 +1,66 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useMemo, useState } from 'react';
+import { MaterialReactTable } from 'material-react-table';
+import { TextField } from '@mui/material';
 
 function App() {
+  // Sample data to display in the table
+  const initialData = [
+    { id: 1, firstName: 'John', lastName: 'Doe', age: 28 },
+    { id: 2, firstName: 'Jane', lastName: 'Doe', age: 34 },
+    // Add more data as needed
+  ];
+
+  // State to hold the search filter
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [data, setData] = useState(initialData);
+
+  // Define columns for Material React Table
+  const columns = useMemo(
+    () => [
+      {
+        accessorKey: 'firstName', // Accessor is the "key" in the data
+        header: 'First Name',
+      },
+      {
+        accessorKey: 'lastName',
+        header: 'Last Name',
+      },
+      {
+        accessorKey: 'age',
+        header: 'Age',
+      },
+    ],
+    []
+  );
+
+  // Effect to filter data when globalFilter changes
+  React.useEffect(() => {
+    const filteredData = initialData.filter(
+      (item) =>
+        item.firstName.toLowerCase().includes(globalFilter.toLowerCase()) ||
+        item.lastName.toLowerCase().includes(globalFilter.toLowerCase()) ||
+        item.age.toString().includes(globalFilter)
+    );
+    setData(filteredData);
+  }, [globalFilter]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {/* Search box */}
+      <TextField
+        id="search"
+        type="text"
+        placeholder="Search..."
+        variant="outlined"
+        value={globalFilter || ''}
+        onChange={(e) => setGlobalFilter(e.target.value)}
+        style={{ marginBottom: 20 }}
+      />
+      <MaterialReactTable
+        columns={columns}
+        data={data}
+        // Removed the global filter props
+      />
     </div>
   );
 }
