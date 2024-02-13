@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { MaterialReactTable } from 'material-react-table';
+import { columns } from './columnReferences'; // Import the columns
 import { TextField } from '@mui/material';
 
 function App() {
@@ -14,24 +15,7 @@ function App() {
   const [globalFilter, setGlobalFilter] = useState('');
   const [data, setData] = useState(initialData);
 
-  // Define columns for Material React Table
-  const columns = useMemo(
-    () => [
-      {
-        accessorKey: 'firstName', // Accessor is the "key" in the data
-        header: 'First Name',
-      },
-      {
-        accessorKey: 'lastName',
-        header: 'Last Name',
-      },
-      {
-        accessorKey: 'age',
-        header: 'Age',
-      },
-    ],
-    []
-  );
+ 
 
   // Effect to filter data when globalFilter changes
   React.useEffect(() => {
