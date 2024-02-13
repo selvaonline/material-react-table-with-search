@@ -1,32 +1,41 @@
-import React, { useMemo, useState } from 'react';
-import { MaterialReactTable } from 'material-react-table';
-import { columns } from './columnReferences'; // Import the columns
-import { TextField } from '@mui/material';
+// App.js or your main component file
+
+import React, { useState, useEffect,useMemo } from "react";
+import { MaterialReactTable } from "material-react-table";
+import { TextField } from "@mui/material";
+import { columns } from "./columnReferences"; // assuming this is where your columns are imported from
 
 function App() {
-  // Sample data to display in the table
-  const initialData = [
-    { id: 1, firstName: 'John', lastName: 'Doe', age: 28 },
-    { id: 2, firstName: 'Jane', lastName: 'Doe', age: 34 },
-    // Add more data as needed
-  ];
+  // The initial unfiltered data
+  const initialData = useMemo(
+    () => [
+      { id: 1, firstName: "John", lastName: "Doe", age: 28 },
+      { id: 2, firstName: "Jane", lastName: "Doe", age: 34 },
+      // ...other data
+    ],
+    []
+  );
 
   // State to hold the search filter
-  const [globalFilter, setGlobalFilter] = useState('');
+  const [globalFilter, setGlobalFilter] = useState("");
+
+  // State to hold the filtered data that will be passed to the table
   const [data, setData] = useState(initialData);
 
- 
-
   // Effect to filter data when globalFilter changes
-  React.useEffect(() => {
-    const filteredData = initialData.filter(
-      (item) =>
-        item.firstName.toLowerCase().includes(globalFilter.toLowerCase()) ||
-        item.lastName.toLowerCase().includes(globalFilter.toLowerCase()) ||
-        item.age.toString().includes(globalFilter)
-    );
-    setData(filteredData);
-  }, [globalFilter]);
+  useEffect(() => {
+    if (globalFilter) {
+      const filteredData = initialData.filter(
+        (item) =>
+          item.firstName.toLowerCase().includes(globalFilter.toLowerCase()) ||
+          item.lastName.toLowerCase().includes(globalFilter.toLowerCase()) ||
+          item.age.toString().includes(globalFilter)
+      );
+      setData(filteredData);
+    } else {
+      setData(initialData); // if there's no filter, show all data
+    }
+  }, [globalFilter, initialData]); // dependencies array
 
   return (
     <div>
@@ -36,14 +45,15 @@ function App() {
         type="text"
         placeholder="Search..."
         variant="outlined"
-        value={globalFilter || ''}
+        value={globalFilter || ""}
         onChange={(e) => setGlobalFilter(e.target.value)}
         style={{ marginBottom: 20 }}
       />
       <MaterialReactTable
-        columns={columns}
-        data={data}
-        // Removed the global filter props
+        columns={columns} // Use the imported columns
+        data={data} // Use the state which holds the (filtered) data
+        showGlobalFilter={false} // Hide the built-in global filter search box
+        // ... other props
       />
     </div>
   );
